@@ -575,10 +575,9 @@ async function chargerMarine() {
     if (alertEvents.length > 0) {
       const ev = alertEvents[0];
       document.getElementById('alert-title').textContent =
-        ev.name?.fr || ev.name?.en || 'Alerte maritime';
+        (ev.type?.fr || ev.type?.en || 'Alerte') + ' ' + (ev.status?.fr || ev.status?.en || '');
       document.getElementById('alert-body').textContent =
-        (ev.status?.fr || ev.status?.en || '') +
-        (ev.type?.fr ? ' — ' + ev.type.fr : '');
+        ev.name?.fr || ev.name?.en || '—';
       document.getElementById('alert-banner').classList.add('visible');
     } else {
       document.getElementById('alert-banner').classList.remove('visible');
@@ -590,13 +589,23 @@ async function chargerMarine() {
     const temp = wc?.airTemperature?.fr || wc?.airTemperature?.en || null;
     const visi = wc?.weatherVisibility?.fr || wc?.weatherVisibility?.en || null;
 
-    // Extraire max/min du texte de température
+    // Extraire max/min du texte de température (gère mots comme "zéro")
     let tmax = null, tmin = null;
     if (temp) {
-      const maxM = temp.match(/[Mm]aximum\s+(?:aujourd['']hui\s+)?(?:(moins)\s+)?(plus\s+)?(\d+)/);
-      const minM = temp.match(/[Mm]inimum\s+(?:cette\s+nuit\s+)?(?:(moins)\s+)?(plus\s+)?(\d+)/);
-      if (maxM) tmax = (maxM[1] ? '-' : '') + maxM[3];
-      if (minM) tmin = (minM[1] ? '-' : '') + minM[3];
+      const motsNb = {'zéro':0,'un':1,'deux':2,'trois':3,'quatre':4,'cinq':5,
+        'six':6,'sept':7,'huit':8,'neuf':9,'dix':10,'onze':11,'douze':12,
+        'treize':13,'quatorze':14,'quinze':15,'seize':16};
+      function parseTempFr(s) {
+        if (!s) return null;
+        const m = s.match(/(?:(moins)\s+)?(\d+|zéro|un|deux|trois|quatre|cinq|six|sept|huit|neuf|dix|onze|douze|treize|quatorze|quinze|seize)\b/i);
+        if (!m) return null;
+        const v = isNaN(m[2]) ? motsNb[m[2].toLowerCase()] : parseInt(m[2]);
+        return (m[1] ? -1 : 1) * v;
+      }
+      const maxM = temp.match(/[Mm]aximum\s+([^.]+)/);
+      const minM = temp.match(/[Mm]inimum\s+([^.]+)/);
+      if (maxM) tmax = parseTempFr(maxM[1]);
+      if (minM) tmin = parseTempFr(minM[1]);
     }
 
     document.getElementById('body-marine').innerHTML = `
