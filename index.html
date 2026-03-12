@@ -453,27 +453,6 @@ function kmhToKt(kmh) {
   return Math.round(kmh * KMH_TO_KT);
 }
 
-// Coupe le texte de vent après "ce soir" / "tonight" pour ne garder que le jour en cours
-function truncateWind(text) {
-  // On coupe avant les mentions du lendemain ou des périodes suivantes
-  const cutMarkers = [
-    /[Vv]endredi\s+matin/,
-    /[Vv]endredi\s+soir/,
-    /[Ss]amedi/,
-    /[Ff]riday\s+morning/,
-    /[Ff]riday\s+evening/,
-    /[Ss]aturday/,
-    /[Pp]uis\s+(?:nord|sud|est|ouest|variable)/i,
-  ];
-  let result = text;
-  let cutAt = text.length;
-  for (const marker of cutMarkers) {
-    const m = text.search(marker);
-    if (m !== -1 && m < cutAt) cutAt = m;
-  }
-  return text.slice(0, cutAt).replace(/[,.\s]+$/, '') + '.';
-}
-
 function heure(isoStr) {
   if (!isoStr) return '—';
   return new Date(isoStr).toLocaleTimeString('fr-CA',
@@ -612,9 +591,7 @@ async function chargerMarine() {
       <div class="data-grid">
         <div class="data-cell wide">
           <div class="cell-label">Vent prévu (nœuds)</div>
-          <div class="cell-value sm" style="color:var(--accent2);line-height:1.4;">${
-            truncateWind(wind || 'N/D')
-          }</div>
+          <div class="cell-value sm" style="color:var(--accent2);line-height:1.4;">${wind}</div>
         </div>
         ${tmax != null
           ? `<div class="data-cell">${cellHTML('Temp. max', tmax, '°C', 'warm')}</div>`
