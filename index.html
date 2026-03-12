@@ -378,7 +378,7 @@
   <!-- ══════════════════════════════════
        SECTION 2 — SUIVI EN COURS DE JOURNÉE
        ══════════════════════════════════ -->
-  <div class="section-title">Suivi — Prévisions horaires Longueuil</div>
+  <div class="section-title">Suivi — Prévisions horaires</div>
   <div class="cards-group">
 
     <div class="card" id="card-hourly">
@@ -405,7 +405,7 @@
     <div class="card" id="card-extended">
       <div class="card-header">
         <div>
-          <div class="card-title">Prévisions étendues — Fleuve</div>
+          <div class="card-title">Prévisions maritimes étendues</div>
           <div class="card-source">Environnement Canada · Montréal à Trois-Rivières</div>
         </div>
         <div class="status-dot load" id="dot-extended"></div>
@@ -688,7 +688,7 @@ async function chargerLongueuil() {
               <div class="hourly-time">${hHeure}</div>
               <div class="hourly-temp">${hTemp}°</div>
               <div class="hourly-cond">${hCond}</div>
-              <div class="hourly-wind">${hVentKt != null ? hVentKt + ' kt ' + hDir : '—'}</div>
+              <div class="hourly-wind">${hVentKt != null ? 'Vent ' + hDir + ' ' + hVentKt + ' kt' : '—'}</div>
             </div>`;
           }).join('')}
         </div>`;
