@@ -498,7 +498,9 @@ async function fetchIWLSSerie(sid, code) {
     + `?time-series-code=${code}&from=${from}&to=${to}&resolution=ONE_MINUTE`);
   if (!r.ok) return null;
   const d = await r.json();
-  return d?.length > 0 ? d[0] : null;
+  // Cherche la dernière mesure avec une valeur non-nulle
+  const valid = d?.filter(item => item.value != null);
+return valid?.length > 0 ? valid[valid.length - 1] : null;
 }
 
 async function chargerIWLS() {
